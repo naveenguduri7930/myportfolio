@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naveen Guduri — Data, ETL & Cloud DevOps Engineer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'Cormorant Garamond', 'Georgia', 'serif'],
+            editorial: ['Cormorant Garamond', 'Playfair Display', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --bg-void: #050505;
+      --bg-card: #0c0c0f;
+      --bg-paper: #fafafa;
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #6366f1;
+      --accent-emerald: #10b981;
+    }
+
+    html, body {
+      background-color: var(--bg-void);
+      color: #f8fafc;
+      overflow-x: clip;
+    }
+
+    /* Custom Dual-Layer Spring Motion Cursor */
+    @media (pointer: fine) {
+      body.motion-cursor-on,
+      body.motion-cursor-on a,
+      body.motion-cursor-on button,
+      body.motion-cursor-on input,
+      body.motion-cursor-on select,
+      body.motion-cursor-on textarea,
+      body.motion-cursor-on label {
+        cursor: none !important;
+      }
+    }
+
+    #cursor-dot {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: #ffffff;
+      mix-blend-mode: difference;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate3d(-100px, -100px, 0);
+      transition: opacity 0.2s ease, transform 0.05s linear;
+    }
+
+    #cursor-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 9999px;
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      mix-blend-mode: difference;
+      pointer-events: none;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate3d(-100px, -100px, 0);
+      transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.25s ease,
+                  border-color 0.25s ease,
+                  mix-blend-mode 0.2s ease;
+    }
+
+    #cursor-ring.is-active {
+      width: 86px;
+      height: 86px;
+      background-color: #38bdf8;
+      border-color: #7dd3fc;
+      mix-blend-mode: normal;
+      box-shadow: 0 0 32px rgba(56, 189, 248, 0.55);
+    }
+
+    #cursor-pill-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #050505;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    #cursor-ring.is-active #cursor-pill-text {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Architectural Subtle Grid */
+    .editorial-grid {
+      background-size: 52px 52px;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    }
+
+    /* 3D Perspective Avatar Card */
+    .avatar-stage {
+      perspective: 1100px;
+    }
+    .avatar-tilt-card {
+      transform-style: preserve-3d;
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+      will-change: transform;
+    }
+    .avatar-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      mix-blend-mode: screen;
+    }
+
+    /* Kinetic Staggered Entrance */
+    @keyframes revealUp {
+      from {
+        opacity: 0;
+        transform: translateY(32px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .kinetic-in {
+      opacity: 0;
+      animation: revealUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .delay-1 { animation-delay: 0.08s; }
+    .delay-2 { animation-delay: 0.18s; }
+    .delay-3 { animation-delay: 0.30s; }
+    .delay-4 { animation-delay: 0.42s; }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Dual-Direction Infinite Marquee */
+    @keyframes marqueeLeft {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+    @keyframes marqueeRight {
+      0% { transform: translate3d(-50%, 0, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+    .marquee-track-left {
+      display: flex;
+      width: max-content;
+      animation: marqueeLeft 34s linear infinite;
+    }
+    .marquee-track-right {
+      display: flex;
+      width: max-content;
+      animation: marqueeRight 38s linear infinite;
+    }
+    .marquee-wrapper:hover .marquee-track-left,
+    .marquee-wrapper:hover .marquee-track-right {
+      animation-play-state: paused;
+    }
+
+    /* Sticky Stacking Project Folders */
+    .stack-folder {
+      position: sticky;
+      top: 92px;
+      transform-origin: top center;
+      transition: transform 0.25s ease-out, box-shadow 0.3s ease;
+    }
+
+    /* Animated Data Flow Beam */
+    @keyframes beamFlow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    .flow-beam {
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #34d399, #38bdf8);
+      background-size: 200% 100%;
+      animation: beamFlow 2.6s linear infinite;
+    }
+
+    /* Magnetic Elements */
+    .magnetic {
+      display: inline-flex;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Kinetic Classic Footer Letters */
+    .geo-letter {
+      display: inline-block;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+      user-select: none;
+    }
+    .geo-letter:hover {
+      transform: translateY(-16px) rotate(-4deg) scale(1.06);
+      filter: brightness(1.15);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .kinetic-in, .scroll-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+      }
+      .marquee-track-left, .marquee-track-right {
+        animation: none !important;
+      }
+      #cursor-dot, #cursor-ring {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="motion-cursor-on font-sans antialiased selection:bg-sky-400 selection:text-black">
+
+  <!-- Dual-Layer Spring-Physics Motion Cursor -->
+  <div id="cursor-ring" aria-hidden="true"><span id="cursor-pill-text">EXPLORE</span></div>
+  <div id="cursor-dot" aria-hidden="true"></div>
+
+  <!-- Top Scroll Progress Line -->
+  <div class="fixed top-0 left-0 right-0 h-[3px] z-50 pointer-events-none bg-transparent">
+    <div id="scroll-bar" class="h-full w-0 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400"></div>
+  </div>
+
+  <!-- Non-blocking Toast Banner -->
+  <div id="toast-banner" class="fixed bottom-6 right-6 z-50 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="flex items-center gap-3 px-4 py-3 rounded-full bg-neutral-900 text-white border border-sky-400/50 shadow-2xl">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+      <span id="toast-text" class="text-xs font-mono font-semibold tracking-wide">COPIED TO CLIPBOARD</span>
+    </div>
+  </div>
+
+  <!-- Minimalist Floating Top Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-40 px-4 sm:px-8 py-4 pointer-events-none">
+    <div class="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto rounded-full border border-white/15 bg-black/80 backdrop-blur-xl px-4 sm:px-6 py-2.5 shadow-2xl">
+      <a href="#hero" data-cursor="TOP" class="magnetic items-center gap-3">
+        <span class="w-8 h-8 rounded-full overflow-hidden border border-sky-400/60 bg-neutral-900 flex items-center justify-center shrink-0">
+          <img src="image_0d87c9.jpg" alt="NG" class="nav-avatar-img w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <span class="hidden w-full h-full items-center justify-center font-serif font-bold text-xs text-sky-300">NG</span>
+        </span>
+        <span class="font-serif font-bold text-base tracking-wide text-white hidden sm:inline">Naveen Guduri</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-7 text-xs font-mono uppercase tracking-widest text-neutral-300">
+        <a href="#capabilities" data-cursor="EXPLORE" class="magnetic hover:text-sky-400 transition-colors">01. Capabilities</a>
+        <a href="#work" data-cursor="VIEW" class="magnetic hover:text-sky-400 transition-colors">02. Architectures</a>
+        <a href="#career" data-cursor="PATH" class="magnetic hover:text-sky-400 transition-colors">03. Career</a>
+        <a href="#footer-connect" data-cursor="SEND" class="magnetic hover:text-sky-400 transition-colors">04. Connect</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button id="motion-toggle" type="button" data-cursor="CURSOR" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/15 bg-white/5 hover:border-sky-400/60 text-[11px] font-mono text-neutral-200 transition-all" title="Toggle custom spring cursor">
+          <span id="motion-led" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>Motion</span>
+        </button>
+
+        <button onclick="openContactModal()" type="button" data-cursor="SEND" class="magnetic px-4 py-1.5 rounded-full bg-white text-black hover:bg-sky-400 text-xs font-mono font-bold uppercase tracking-wider transition-colors">
+          Contact Me
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 1: CLASSIC EDITORIAL HERO + 3D ANIME PORTRAIT SHOWCASE        -->
+  <!-- ===================================================================== -->
+  <section id="hero" class="relative min-h-screen flex flex-col justify-between pt-28 pb-14 px-4 sm:px-8 bg-[#050505] editorial-grid overflow-hidden">
+    <!-- Subtle Cyan & Indigo Ambient Glow -->
+    <div class="pointer-events-none absolute top-1/3 right-1/4 w-[500px] h-[500px] rounded-full bg-sky-500/15 blur-[135px]"></div>
+    <div class="pointer-events-none absolute bottom-10 left-10 w-[360px] h-[360px] rounded-full bg-indigo-500/10 blur-[120px]"></div>
+
+    <div class="max-w-7xl mx-auto w-full relative z-10 flex-1 flex flex-col justify-center">
+      <!-- Top Editorial Metadata Strip -->
+      <div class="kinetic-in delay-1 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5 mb-10">
+        <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-300 text-xs font-mono font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>AVAILABLE FOR DATA, ETL &amp; CLOUD DEVOPS ROLES</span>
+        </div>
+        <div class="text-xs font-mono text-neutral-400 uppercase tracking-widest">
+          HYDERABAD, INDIA • 4+ YRS EXPERIENCE • HCLTECH
+        </div>
+      </div>
+
+      <!-- Main Hero Grid: Classic Serif Typography + 3D Interactive Anime Portrait -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        <div class="lg:col-span-7 space-y-6">
+          <p class="kinetic-in delay-1 font-editorial italic text-xl sm:text-2xl text-sky-300 tracking-wide">
+            Portfolio &amp; Engineering Monograph
+          </p>
+
+          <h1 class="kinetic-in delay-2 font-serif font-bold text-5xl sm:text-7xl xl:text-[5.5rem] leading-[0.98] tracking-tight text-white">
+            Hi, I’m <br />
+            <span class="italic font-semibold text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-cyan-200 to-indigo-300">Naveen Guduri</span>
+          </h1>
+
+          <p class="kinetic-in delay-3 font-serif text-xl sm:text-2xl font-semibold text-neutral-200 tracking-normal">
+            Senior Software Engineer — Data, ETL &amp; Cloud DevOps
+          </p>
+
+          <p class="kinetic-in delay-3 text-sm sm:text-base text-neutral-300 max-w-2xl leading-relaxed font-normal">
+            Architecting scalable <span class="text-white font-medium">Matillion ETL / DPC</span> &amp; <span class="text-white font-medium">Snowflake</span> data ecosystems, high-precision <span class="text-white font-medium">SQL</span> &amp; <span class="text-white font-medium">Power BI</span> analytics, and automated CI/CD &amp; cloud release pipelines across <span class="text-white font-medium">Microsoft Azure</span>, <span class="text-white font-medium">Docker</span>, and <span class="text-white font-medium">Azure DevOps</span>.
+          </p>
+
+          <!-- Glowing Gradient CTA Pills -->
+          <div class="kinetic-in delay-4 flex flex-wrap items-center gap-4 pt-3">
+            <a href="#work" data-cursor="EXPLORE" class="magnetic px-7 py-3.5 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-400 text-black font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_32px_rgba(56,189,248,0.4)] hover:shadow-[0_0_48px_rgba(56,189,248,0.7)] transition-shadow">
+              Explore Work ↘
+            </a>
+
+            <button onclick="openContactModal()" type="button" data-cursor="SEND" class="magnetic px-7 py-3.5 rounded-full border border-white/25 bg-white/5 hover:bg-white hover:text-black text-white font-mono font-bold text-xs sm:text-sm uppercase tracking-wider transition-all">
+              Contact Me
+            </button>
+
+            <button onclick="copyEmailAddress()" type="button" data-cursor="COPY" class="magnetic px-5 py-3.5 rounded-full border border-white/15 bg-neutral-900/90 hover:border-sky-400/60 text-neutral-300 font-mono text-xs flex items-center gap-2 transition-all">
+              <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+              <span>naveenguduri7890@gmail.com</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Interactive 3D Anime Portrait Showcase -->
+        <div class="lg:col-span-5 kinetic-in delay-3 flex flex-col items-center">
+          <div id="hero-avatar-stage" data-cursor="INSPECT" class="avatar-stage w-full max-w-[390px]">
+            <div id="hero-avatar-card" class="avatar-tilt-card relative rounded-[2rem] border border-sky-400/35 bg-gradient-to-b from-[#0d151c] to-[#050709] p-3.5 shadow-[0_25px_70px_rgba(56,189,248,0.22)]">
+              <!-- Top Card Header -->
+              <div class="flex items-center justify-between text-[10px] font-mono text-neutral-400 px-1.5 pb-2.5">
+                <span class="flex items-center gap-1.5 text-sky-300">
+                  <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                  <span>NAVEEN.GUDURI // IDENTITY</span>
+                </span>
+                <label for="avatar-file-input" class="text-neutral-400 hover:text-sky-300 underline underline-offset-2 transition-colors" title="Upload local portrait image if previewing offline">
+                  Swap Photo
+                </label>
+                <input id="avatar-file-input" type="file" accept="image/*" class="hidden" />
+              </div>
+
+              <!-- Anime Portrait Container -->
+              <div class="relative aspect-square w-full rounded-[1.45rem] overflow-hidden border border-white/15 bg-[#080d11]">
+                <img
+                  id="hero-anime-img"
+                  src="image_0d87c9.jpg"
+                  alt="Naveen Guduri Anime Portrait"
+                  class="w-full h-full object-cover object-top block select-none"
+                  onerror="renderFallbackPortrait(this)"
+                />
+                <!-- Stylized SVG Fallback Canvas (Hidden unless image_0d87c9.jpg is missing) -->
+                <div id="anime-svg-fallback" class="hidden w-full h-full flex-col items-center justify-center bg-gradient-to-b from-[#0b1924] to-[#05080b] p-6 text-center">
+                  <svg viewBox="0 0 240 240" class="w-48 h-48 drop-shadow-[0_0_22px_rgba(56,189,248,0.45)]" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <radialGradient id="rimGlow" cx="50%" cy="45%" r="50%">
+                        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
+                        <stop offset="100%" stop-color="#05080b" stop-opacity="0"/>
+                      </radialGradient>
+                      <linearGradient id="shirtGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#475569"/>
+                        <stop offset="100%" stop-color="#1e293b"/>
+                      </linearGradient>
+                    </defs>
+                    <circle cx="120" cy="115" r="105" fill="url(#rimGlow)"/>
+                    <!-- Low Ponytail -->
+                    <path d="M158 128 Q186 122 194 146 Q180 144 166 150 Q176 158 184 166 Q164 162 154 146 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8"/>
+                    <!-- Shoulders & Collared Shirt -->
+                    <path d="M44 235 C52 186 82 174 120 174 C158 174 188 186 196 235 Z" fill="url(#shirtGrad)" stroke="#38bdf8" stroke-width="2"/>
+                    <path d="M95 174 L120 206 L145 174" fill="none" stroke="#94a3b8" stroke-width="2"/>
+                    <!-- Neck -->
+                    <rect x="103" y="142" width="34" height="38" rx="12" fill="#c6865c"/>
+                    <!-- Face Contour -->
+                    <path d="M78 88 C78 56 162 56 162 88 C162 128 145 154 120 156 C95 154 78 128 78 88 Z" fill="#d4956a" stroke="#0f172a" stroke-width="2"/>
+                    <!-- Beard & Mustache -->
+                    <path d="M80 106 C80 136 96 156 120 157 C144 156 160 136 160 106 C156 126 142 138 120 138 C98 138 84 126 80 106 Z" fill="#111827"/>
+                    <path d="M98 124 Q120 116 142 124 Q138 130 120 127 Q102 130 98 124 Z" fill="#111827"/>
+                    <!-- Eyes & Brows -->
+                    <path d="M90 88 Q102 83 112 87" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M128 87 Q138 83 150 88" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+                    <ellipse cx="101" cy="96" rx="6" ry="4" fill="#0f172a"/>
+                    <ellipse cx="139" cy="96" rx="6" ry="4" fill="#0f172a"/>
+                    <circle cx="103" cy="95" r="1.5" fill="#ffffff"/>
+                    <circle cx="141" cy="95" r="1.5" fill="#ffffff"/>
+                    <!-- Voluminous Swept Hair -->
+                    <path d="M72 92 C62 58 84 26 124 24 C156 22 182 42 174 74 C182 84 176 102 164 112 C164 84 148 64 120 64 C94 64 78 78 72 92 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                  </svg>
+                  <span class="text-[11px] font-mono text-sky-300 mt-1">Place <strong class="text-white">image_0d87c9.jpg</strong> alongside index.html</span>
+                </div>
+
+                <!-- Dynamic Cyan Cursor Glare Overlay -->
+                <div id="hero-avatar-glare" class="avatar-glare"></div>
+
+                <!-- Bottom Glass Badge Overlay -->
+                <div class="absolute bottom-3 left-3 right-3 px-3.5 py-2.5 rounded-xl bg-black/75 backdrop-blur-md border border-white/15 flex items-center justify-between">
+                  <div>
+                    <div class="font-serif font-bold text-sm text-white leading-tight">Naveen Guduri</div>
+                    <div class="text-[10px] font-mono text-sky-300">Data • ETL • Cloud DevOps</div>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full bg-sky-400/20 border border-sky-400/40 text-[10px] font-mono text-sky-200">3D TILT</span>
+                </div>
+              </div>
+
+              <!-- Key Metrics Footer Strip -->
+              <div class="grid grid-cols-3 gap-2 pt-3 mt-3 border-t border-white/10 text-center font-mono">
+                <div class="p-2 rounded-xl bg-white/5">
+                  <div class="font-serif text-lg sm:text-xl font-bold text-white">500+</div>
+                  <div class="text-[10px] text-neutral-400">ETL JOBS</div>
+                </div>
+                <div class="p-2 rounded-xl bg-white/5">
+                  <div class="font-serif text-lg sm:text-xl font-bold text-sky-400">100%</div>
+                  <div class="text-[10px] text-neutral-400">ZERO DOWNTIME</div>
+                </div>
+                <div class="p-2 rounded-xl bg-white/5">
+                  <div class="font-serif text-lg sm:text-xl font-bold text-emerald-400">CI/CD</div>
+                  <div class="text-[10px] text-neutral-400">CLOUD DEVOPS</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 2: DUAL-DIRECTION KINETIC TECH MARQUEE                        -->
+  <!-- ===================================================================== -->
+  <section class="py-10 bg-[#08080A] border-y border-white/10 overflow-hidden space-y-5">
+    <!-- Row 1: Leftward Marquee (Data, ETL & Cloud) -->
+    <div class="marquee-wrapper overflow-hidden">
+      <div class="marquee-track-left flex items-center gap-4">
+        <div class="flex items-center gap-4 shrink-0">
+          <span class="px-5 py-2.5 rounded-full border border-sky-400/40 bg-sky-500/10 text-sky-300 font-mono text-xs sm:text-sm font-semibold">MATILLION ETL (METL)</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">MATILLION DATA PRODUCTIVITY CLOUD (DPC)</span>
+          <span class="px-5 py-2.5 rounded-full border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 font-mono text-xs sm:text-sm font-semibold">SNOWFLAKE</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">SQL QUERY TUNING</span>
+          <span class="px-5 py-2.5 rounded-full border border-amber-400/40 bg-amber-500/10 text-amber-300 font-mono text-xs sm:text-sm font-semibold">POWER BI</span>
+          <span class="px-5 py-2.5 rounded-full border border-indigo-400/40 bg-indigo-500/10 text-indigo-300 font-mono text-xs sm:text-sm font-semibold">MICROSOFT AZURE (VMSS • VNET • STORAGE • ARM)</span>
+        </div>
+        <!-- Duplicate for seamless loop -->
+        <div class="flex items-center gap-4 shrink-0" aria-hidden="true">
+          <span class="px-5 py-2.5 rounded-full border border-sky-400/40 bg-sky-500/10 text-sky-300 font-mono text-xs sm:text-sm font-semibold">MATILLION ETL (METL)</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">MATILLION DATA PRODUCTIVITY CLOUD (DPC)</span>
+          <span class="px-5 py-2.5 rounded-full border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 font-mono text-xs sm:text-sm font-semibold">SNOWFLAKE</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">SQL QUERY TUNING</span>
+          <span class="px-5 py-2.5 rounded-full border border-amber-400/40 bg-amber-500/10 text-amber-300 font-mono text-xs sm:text-sm font-semibold">POWER BI</span>
+          <span class="px-5 py-2.5 rounded-full border border-indigo-400/40 bg-indigo-500/10 text-indigo-300 font-mono text-xs sm:text-sm font-semibold">MICROSOFT AZURE (VMSS • VNET • STORAGE • ARM)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Rightward Marquee (Azure DevOps, Cloud & AI) -->
+    <div class="marquee-wrapper overflow-hidden">
+      <div class="marquee-track-right flex items-center gap-4">
+        <div class="flex items-center gap-4 shrink-0">
+          <span class="px-5 py-2.5 rounded-full border border-sky-400/40 bg-sky-500/10 text-sky-300 font-mono text-xs sm:text-sm font-semibold">AZURE DEVOPS (YAML &amp; CLASSIC)</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">DOCKER &amp; CLOUD CONTAINERS</span>
+          <span class="px-5 py-2.5 rounded-full border border-purple-400/40 bg-purple-500/10 text-purple-300 font-mono text-xs sm:text-sm font-semibold">CLOUD INFRASTRUCTURE AUTOMATION</span>
+          <span class="px-5 py-2.5 rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 font-mono text-xs sm:text-sm font-semibold">SONARQUBE (SAST &amp; QUALITY GATES)</span>
+          <span class="px-5 py-2.5 rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 font-mono text-xs sm:text-sm font-semibold">LEGIT SECURITY</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">AZURE KEYVAULT &amp; WIF</span>
+          <span class="px-5 py-2.5 rounded-full border border-fuchsia-400/40 bg-fuchsia-500/10 text-fuchsia-300 font-mono text-xs sm:text-sm font-semibold">PYTHON • BASH • MCP • CURSOR AI • GITHUB COPILOT</span>
+        </div>
+        <!-- Duplicate for seamless loop -->
+        <div class="flex items-center gap-4 shrink-0" aria-hidden="true">
+          <span class="px-5 py-2.5 rounded-full border border-sky-400/40 bg-sky-500/10 text-sky-300 font-mono text-xs sm:text-sm font-semibold">AZURE DEVOPS (YAML &amp; CLASSIC)</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">DOCKER &amp; CLOUD CONTAINERS</span>
+          <span class="px-5 py-2.5 rounded-full border border-purple-400/40 bg-purple-500/10 text-purple-300 font-mono text-xs sm:text-sm font-semibold">CLOUD INFRASTRUCTURE AUTOMATION</span>
+          <span class="px-5 py-2.5 rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 font-mono text-xs sm:text-sm font-semibold">SONARQUBE (SAST &amp; QUALITY GATES)</span>
+          <span class="px-5 py-2.5 rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-300 font-mono text-xs sm:text-sm font-semibold">LEGIT SECURITY</span>
+          <span class="px-5 py-2.5 rounded-full border border-white/15 bg-neutral-900 text-white font-mono text-xs sm:text-sm font-semibold">AZURE KEYVAULT &amp; WIF</span>
+          <span class="px-5 py-2.5 rounded-full border border-fuchsia-400/40 bg-fuchsia-500/10 text-fuchsia-300 font-mono text-xs sm:text-sm font-semibold">PYTHON • BASH • MCP • CURSOR AI • GITHUB COPILOT</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 3: STARK WHITE (#FAFAFA) CLASSIC EDITORIAL ABOUT & 01–04      -->
+  <!-- ===================================================================== -->
+  <section id="capabilities" class="bg-[#FAFAFA] text-[#0A0A0A] py-24 sm:py-32 px-4 sm:px-8 border-b border-neutral-200">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <!-- Left Sticky Classic Editorial Summary + Portrait Medallion -->
+      <div class="lg:col-span-5 lg:sticky lg:top-28 space-y-6 scroll-reveal">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black text-white text-xs font-mono uppercase tracking-widest">
+          <span>01 // ABOUT &amp; CAPABILITIES</span>
+        </div>
+
+        <h2 class="font-serif font-bold text-4xl sm:text-5xl leading-[1.06] tracking-tight text-black">
+          Engineering Data &amp; Cloud Platforms <span class="italic font-semibold text-sky-700">at Scale.</span>
+        </h2>
+
+        <!-- Compact Editorial Portrait Callout Card -->
+        <div class="flex items-center gap-4 p-3.5 rounded-2xl bg-white border border-neutral-200 shadow-sm">
+          <div class="w-16 h-16 rounded-xl overflow-hidden border border-neutral-300 bg-neutral-900 shrink-0">
+            <img src="image_0d87c9.jpg" alt="Naveen Guduri" class="about-avatar-img w-full h-full object-cover object-top" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="hidden w-full h-full items-center justify-center font-serif font-bold text-lg text-sky-300">NG</div>
+          </div>
+          <div>
+            <div class="font-serif font-bold text-lg text-black leading-snug">Naveen Guduri</div>
+            <div class="text-xs font-mono text-neutral-500">HCLTech • BCBSRI Healthcare Data Ecosystem</div>
+          </div>
+        </div>
+
+        <p class="text-base text-neutral-700 leading-relaxed">
+          With <strong class="font-semibold text-black">4+ years at HCLTech</strong> developing enterprise healthcare data solutions for <strong class="font-semibold text-black">Blue Cross &amp; Blue Shield of Rhode Island (BCBSRI)</strong>, I unite data engineering with automated cloud release governance.
+        </p>
+
+        <p class="text-sm text-neutral-600 leading-relaxed">
+          From building high-throughput Matillion ETL/DPC pipelines and tuning Snowflake SQL workloads to enforcing automated SonarQube &amp; Legit Security quality gates across Azure DevOps and cloud environments, every system is architected for precision, reliability, and speed.
+        </p>
+
+        <div class="grid grid-cols-2 gap-4 pt-2">
+          <div class="p-4 rounded-2xl bg-white border border-neutral-200 shadow-sm">
+            <div class="font-serif font-bold text-3xl text-black">4+ Yrs</div>
+            <div class="text-xs font-mono text-neutral-500 mt-1">HCLTECH • BCBSRI</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white border border-neutral-200 shadow-sm">
+            <div class="font-serif font-bold text-3xl text-sky-700">500+</div>
+            <div class="text-xs font-mono text-neutral-500 mt-1">JOBS STANDARDIZED</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Interactive Numbered 01–04 Capabilities Accordion -->
+      <div class="lg:col-span-7 divide-y divide-neutral-300 border-y border-neutral-300 scroll-reveal">
+        <!-- Capability 01 -->
+        <div class="cap-row py-7 transition-colors" data-cursor="INSPECT">
+          <button type="button" onclick="toggleCapability(0)" class="w-full text-left flex items-center justify-between gap-4 group">
+            <div class="flex items-baseline gap-5">
+              <span class="font-mono text-sm font-bold text-sky-700">01</span>
+              <h3 class="font-serif font-bold text-2xl sm:text-3xl text-black group-hover:translate-x-2 transition-transform">
+                ETL &amp; Data Pipelines
+              </h3>
+            </div>
+            <span class="cap-icon w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center font-mono text-lg font-bold text-black group-hover:bg-black group-hover:text-white transition-colors">−</span>
+          </button>
+          <div class="cap-body pt-5 pl-9 sm:pl-10 space-y-4">
+            <p class="text-sm sm:text-base text-neutral-700 leading-relaxed">
+              Designing, developing, and scaling end-to-end data ingestion and transformation workflows across <strong>Matillion ETL (METL)</strong> and <strong>Matillion Data Productivity Cloud (DPC)</strong>, including ground-up DPC environment setup, VM scaling, and Modern Auth SMTP standardization across 500+ jobs with 0% error.
+            </p>
+            <div class="p-4 rounded-2xl bg-neutral-950 text-white font-mono text-xs flex flex-wrap items-center justify-between gap-2">
+              <span class="text-sky-400">PIPELINE: Healthcare Sources → Matillion ETL / DPC → Snowflake</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300">0% Error Delivery</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capability 02 -->
+        <div class="cap-row py-7 transition-colors" data-cursor="INSPECT">
+          <button type="button" onclick="toggleCapability(1)" class="w-full text-left flex items-center justify-between gap-4 group">
+            <div class="flex items-baseline gap-5">
+              <span class="font-mono text-sm font-bold text-sky-700">02</span>
+              <h3 class="font-serif font-bold text-2xl sm:text-3xl text-black group-hover:translate-x-2 transition-transform">
+                Snowflake &amp; SQL Engineering
+              </h3>
+            </div>
+            <span class="cap-icon w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center font-mono text-lg font-bold text-black group-hover:bg-black group-hover:text-white transition-colors">+</span>
+          </button>
+          <div class="cap-body hidden pt-5 pl-9 sm:pl-10 space-y-4">
+            <p class="text-sm sm:text-base text-neutral-700 leading-relaxed">
+              Writing high-performance <strong>SQL</strong> transformations, reconciliation logic, and query optimizations in <strong>Snowflake</strong>, paired with interactive <strong>Power BI</strong> semantic models and analytical dashboards for payer claims intelligence.
+            </p>
+            <div class="p-4 rounded-2xl bg-neutral-950 text-white font-mono text-xs flex flex-wrap items-center justify-between gap-2">
+              <span class="text-cyan-400">STACK: Snowflake DW • Complex SQL • Power BI Models</span>
+              <span class="px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-300">Query Performance Tuned</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capability 03 -->
+        <div class="cap-row py-7 transition-colors" data-cursor="INSPECT">
+          <button type="button" onclick="toggleCapability(2)" class="w-full text-left flex items-center justify-between gap-4 group">
+            <div class="flex items-baseline gap-5">
+              <span class="font-mono text-sm font-bold text-sky-700">03</span>
+              <h3 class="font-serif font-bold text-2xl sm:text-3xl text-black group-hover:translate-x-2 transition-transform">
+                Azure DevOps &amp; CI/CD
+              </h3>
+            </div>
+            <span class="cap-icon w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center font-mono text-lg font-bold text-black group-hover:bg-black group-hover:text-white transition-colors">+</span>
+          </button>
+          <div class="cap-body hidden pt-5 pl-9 sm:pl-10 space-y-4">
+            <p class="text-sm sm:text-base text-neutral-700 leading-relaxed">
+              Architecting multi-stage <strong>YAML and Classic pipelines</strong> in <strong>Azure DevOps</strong> with branch policies, approval gates, artifact caching, repository migrations, and elastic self-hosted <strong>Azure VMSS</strong> agent pools alongside containerized cloud deployments.
+            </p>
+            <div class="p-4 rounded-2xl bg-neutral-950 text-white font-mono text-xs flex flex-wrap items-center justify-between gap-2">
+              <span class="text-indigo-400">RELEASE: Azure Repos → YAML Pipelines → VMSS &amp; Cloud</span>
+              <span class="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300">Zero-Downtime Releases</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capability 04 -->
+        <div class="cap-row py-7 transition-colors" data-cursor="INSPECT">
+          <button type="button" onclick="toggleCapability(3)" class="w-full text-left flex items-center justify-between gap-4 group">
+            <div class="flex items-baseline gap-5">
+              <span class="font-mono text-sm font-bold text-sky-700">04</span>
+              <h3 class="font-serif font-bold text-2xl sm:text-3xl text-black group-hover:translate-x-2 transition-transform">
+                Cloud &amp; Code Quality Governance
+              </h3>
+            </div>
+            <span class="cap-icon w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center font-mono text-lg font-bold text-black group-hover:bg-black group-hover:text-white transition-colors">+</span>
+          </button>
+          <div class="cap-body hidden pt-5 pl-9 sm:pl-10 space-y-4">
+            <p class="text-sm sm:text-base text-neutral-700 leading-relaxed">
+              Provisioning repeatable Microsoft Azure cloud resources (VMSS, VNet, Storage, ARM) and enforcing automated release guardrails across production branches using <strong>SonarQube</strong> (SAST &amp; Quality Gates), <strong>Legit Security</strong>, <strong>Workload Identity Federation (WIF)</strong>, and <strong>Azure KeyVault</strong>.
+            </p>
+            <div class="p-4 rounded-2xl bg-neutral-950 text-white font-mono text-xs flex flex-wrap items-center justify-between gap-2">
+              <span class="text-emerald-400">GUARDRAILS: SonarQube + Legit Security + KeyVault + WIF</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300">Zero Static Secrets</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 4: STICKY STACKING PROJECT FOLDERS (DARK #08080A)             -->
+  <!-- ===================================================================== -->
+  <section id="work" class="bg-[#08080A] py-24 sm:py-32 px-4 sm:px-8 border-b border-white/10">
+    <div class="max-w-6xl mx-auto space-y-14">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 scroll-reveal">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-sky-400">02 // SELECTED ARCHITECTURES</span>
+          <h2 class="font-serif font-bold text-4xl sm:text-6xl text-white tracking-tight mt-2">
+            Sticky Project Stack
+          </h2>
+        </div>
+        <p class="text-sm text-neutral-400 max-w-md font-mono">
+          Scroll down to stack each engineering folder and click <span class="text-white">VIEW ARCHITECTURE</span> for full technical schematics.
+        </p>
+      </div>
+
+      <!-- Stacking Folder Container -->
+      <div class="space-y-10 pb-12">
+
+        <!-- Folder 01 -->
+        <article data-cursor="VIEW" class="stack-folder rounded-[2rem] border border-white/15 bg-[#101014] p-6 sm:p-10 shadow-[0_-20px_50px_rgba(0,0,0,0.85)]" style="top: 92px; z-index: 10;">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5 mb-6">
+            <span class="font-mono text-xs sm:text-sm font-bold text-purple-400 tracking-wider">01 / HEALTHCARE CLAIMS AI ANALYTICS</span>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-purple-500/15 border border-purple-400/30 text-purple-300 text-xs font-mono">Codevibe Hackathon</span>
+              <span class="px-3 py-1 rounded-full bg-white/5 text-neutral-300 text-xs font-mono">AI &amp; BI</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <h3 class="font-serif font-bold text-2xl sm:text-4xl text-white">
+                Healthcare Claims Analytical &amp; Forecasting Dashboard
+              </h3>
+              <p class="text-sm sm:text-base text-neutral-300 leading-relaxed">
+                Engineered using <strong class="text-white">Python, Cursor AI, and GitHub Copilot</strong> to monitor payer claims performance, uncover root-cause denial patterns, and forecast claim volumes and financial exposure.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Python</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Cursor AI</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">GitHub Copilot</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">SQL</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Power BI</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-4">
+              <div class="p-4 rounded-2xl bg-black border border-white/10 space-y-3">
+                <div class="text-[11px] font-mono text-neutral-400 flex justify-between">
+                  <span>LIVE FLOW TELEMETRY</span>
+                  <span class="text-emerald-400">● ACTIVE</span>
+                </div>
+                <div class="flex items-center justify-between gap-1.5 text-[11px] font-mono">
+                  <span class="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-sky-400/40 text-sky-300">Claims SQL</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-purple-400/40 text-purple-300">Python AI</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-emerald-400/40 text-emerald-300">Power BI</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full flow-beam"></div>
+              </div>
+
+              <button onclick="openArchModal(0)" type="button" data-cursor="VIEW" class="magnetic w-full py-3.5 px-6 rounded-full bg-white text-black hover:bg-sky-400 font-mono font-bold text-xs uppercase tracking-wider justify-center transition-colors">
+                View Architecture →
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Folder 02 -->
+        <article data-cursor="VIEW" class="stack-folder rounded-[2rem] border border-white/15 bg-[#131319] p-6 sm:p-10 shadow-[0_-20px_50px_rgba(0,0,0,0.85)]" style="top: 112px; z-index: 20;">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5 mb-6">
+            <span class="font-mono text-xs sm:text-sm font-bold text-emerald-400 tracking-wider">02 / ENTERPRISE SMTP &amp; MODERN AUTHENTICATION STANDARDIZATION</span>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-mono">Matillion ETL Admin</span>
+              <span class="px-3 py-1 rounded-full bg-white/5 text-neutral-300 text-xs font-mono">0% Error • 500+ Jobs</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <h3 class="font-serif font-bold text-2xl sm:text-4xl text-white">
+                Modern Authentication SMTP Standardization Across 500+ Jobs
+              </h3>
+              <p class="text-sm sm:text-base text-neutral-300 leading-relaxed">
+                Delivered as a dedicated <strong class="text-white">Matillion ETL Administrator</strong> achievement—standardizing OAuth Modern Authentication SMTP configurations across 500+ production <strong class="text-white">Matillion ETL and DPC</strong> jobs with <strong class="text-white">0% error</strong> and zero disruption to scheduled healthcare workloads.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Matillion ETL Admin</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Matillion DPC</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">OAuth Modern Auth</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Azure KeyVault</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-4">
+              <div class="p-4 rounded-2xl bg-black border border-white/10 space-y-3">
+                <div class="text-[11px] font-mono text-neutral-400 flex justify-between">
+                  <span>ETL ADMIN STANDARDIZATION</span>
+                  <span class="text-emerald-400">● 0% ERROR RATE</span>
+                </div>
+                <div class="flex items-center justify-between gap-1.5 text-[11px] font-mono">
+                  <span class="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-sky-400/40 text-sky-300">500+ Jobs</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-indigo-400/40 text-indigo-300">KeyVault OAuth</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2.5 py-1.5 rounded-lg bg-neutral-900 border border-emerald-400/40 text-emerald-300">Modern SMTP</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full flow-beam"></div>
+              </div>
+
+              <button onclick="openArchModal(1)" type="button" data-cursor="VIEW" class="magnetic w-full py-3.5 px-6 rounded-full bg-white text-black hover:bg-emerald-400 font-mono font-bold text-xs uppercase tracking-wider justify-center transition-colors">
+                View Architecture →
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Folder 03 -->
+        <article data-cursor="DEPLOY" class="stack-folder rounded-[2rem] border border-white/15 bg-[#16161e] p-6 sm:p-10 shadow-[0_-20px_50px_rgba(0,0,0,0.85)]" style="top: 132px; z-index: 30;">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5 mb-6">
+            <span class="font-mono text-xs sm:text-sm font-bold text-sky-400 tracking-wider">03 / AUTOMATED DEVOPS &amp; CI/CD PIPELINES</span>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-xs font-mono">Automated Governance</span>
+              <span class="px-3 py-1 rounded-full bg-white/5 text-neutral-300 text-xs font-mono">Azure &amp; VMSS</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <h3 class="font-serif font-bold text-2xl sm:text-4xl text-white">
+                Multi-Stage YAML Pipelines, Quality Gates &amp; Cloud Automation
+              </h3>
+              <p class="text-sm sm:text-base text-neutral-300 leading-relaxed">
+                Architected automated CI/CD governance with <strong class="text-white">SonarQube SAST</strong>, <strong class="text-white">Legit Security</strong> supply-chain scanning, <strong class="text-white">WIF</strong> passwordless auth, elastic <strong class="text-white">Azure VMSS</strong> agent pools, and containerized <strong class="text-white">Docker</strong> cloud deployments.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Azure DevOps</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">SonarQube</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Legit Security</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Docker</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">VMSS</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">WIF</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-4">
+              <div class="p-4 rounded-2xl bg-black border border-white/10 space-y-3">
+                <div class="text-[11px] font-mono text-neutral-400 flex justify-between">
+                  <span>DEVOPS RELEASE GATE</span>
+                  <span class="text-sky-400">● SAST + QUALITY VERIFIED</span>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-1 text-[10px] font-mono">
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-white/15 text-neutral-200">Git</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-sky-400/40 text-sky-300">SonarQube</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-amber-400/40 text-amber-300">Legit</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-emerald-400/40 text-emerald-300">Azure Cloud</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full flow-beam"></div>
+              </div>
+
+              <button onclick="openArchModal(2)" type="button" data-cursor="DEPLOY" class="magnetic w-full py-3.5 px-6 rounded-full bg-white text-black hover:bg-sky-400 font-mono font-bold text-xs uppercase tracking-wider justify-center transition-colors">
+                View Architecture →
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Folder 04 -->
+        <article data-cursor="DEPLOY" class="stack-folder rounded-[2rem] border border-white/15 bg-[#1a1a24] p-6 sm:p-10 shadow-[0_-20px_50px_rgba(0,0,0,0.9)]" style="top: 152px; z-index: 40;">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5 mb-6">
+            <span class="font-mono text-xs sm:text-sm font-bold text-indigo-400 tracking-wider">04 / CLOUD DATA WAREHOUSE &amp; MATILLION DPC</span>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-300 text-xs font-mono">Cloud Modernization</span>
+              <span class="px-3 py-1 rounded-full bg-white/5 text-neutral-300 text-xs font-mono">Snowflake</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <h3 class="font-serif font-bold text-2xl sm:text-4xl text-white">
+                Matillion DPC Provisioning &amp; Snowflake Cloud Modernization
+              </h3>
+              <p class="text-sm sm:text-base text-neutral-300 leading-relaxed">
+                Delivered rapid <strong class="text-white">Matillion Data Productivity Cloud (DPC)</strong> environment provisioning, METL VM upgrades, and <strong class="text-white">KeyVault/Snowflake</strong> migrations backed by automated <strong class="text-white">Azure</strong> infrastructure and tuned <strong class="text-white">SQL</strong> pipelines.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Matillion DPC</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Snowflake</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Microsoft Azure</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">SQL</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Azure KeyVault</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-4">
+              <div class="p-4 rounded-2xl bg-black border border-white/10 space-y-3">
+                <div class="text-[11px] font-mono text-neutral-400 flex justify-between">
+                  <span>CLOUD WAREHOUSE TOPOLOGY</span>
+                  <span class="text-indigo-400">● AZURE MANAGED</span>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-1 text-[10px] font-mono">
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-white/15 text-neutral-200">Git</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-sky-400/40 text-sky-300">SonarQube</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-amber-400/40 text-amber-300">Legit</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-emerald-400/40 text-emerald-300">AKS / VMSS</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full flow-beam"></div>
+              </div>
+
+              <button onclick="openArchModal(2)" type="button" data-cursor="DEPLOY" class="magnetic w-full py-3.5 px-6 rounded-full bg-white text-black hover:bg-sky-400 font-mono font-bold text-xs uppercase tracking-wider justify-center transition-colors">
+                View Architecture →
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Folder 04 -->
+        <article data-cursor="DEPLOY" class="stack-folder rounded-[2rem] border border-white/15 bg-[#1a1a24] p-6 sm:p-10 shadow-[0_-20px_50px_rgba(0,0,0,0.9)]" style="top: 152px; z-index: 40;">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5 mb-6">
+            <span class="font-mono text-xs sm:text-sm font-bold text-indigo-400 tracking-wider">04 / MATILLION DPC GROUND-UP PLATFORM SETUP</span>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-300 text-xs font-mono">Built From Scratch</span>
+              <span class="px-3 py-1 rounded-full bg-white/5 text-neutral-300 text-xs font-mono">Matillion DPC</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <h3 class="font-serif font-bold text-2xl sm:text-4xl text-white">
+                Matillion DPC Ground-Up Platform Setup &amp; Environment Provisioning
+              </h3>
+              <p class="text-sm sm:text-base text-neutral-300 leading-relaxed">
+                Architected and set up <strong class="text-white">Matillion Data Productivity Cloud (DPC)</strong> completely from scratch—configuring cloud environments, execution agents, <strong class="text-white">Snowflake</strong> warehouse connectivity, <strong class="text-white">Azure KeyVault</strong> secret management, network rules, and full pipeline migration readiness.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Matillion DPC</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Ground-Up Setup</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Snowflake Connectivity</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Azure KeyVault</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-200">Microsoft Azure</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-4">
+              <div class="p-4 rounded-2xl bg-black border border-white/10 space-y-3">
+                <div class="text-[11px] font-mono text-neutral-400 flex justify-between">
+                  <span>DPC PLATFORM ARCHITECTURE</span>
+                  <span class="text-indigo-400">● BUILT FROM SCRATCH</span>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-1 text-[10px] font-mono">
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-white/15 text-neutral-200">Azure VNet</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-sky-400/40 text-sky-300">DPC Agents</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-indigo-400/40 text-indigo-300">KeyVault</span>
+                  <span class="text-sky-400">→</span>
+                  <span class="px-2 py-1 rounded bg-neutral-900 border border-emerald-400/40 text-emerald-300">Snowflake</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full flow-beam"></div>
+              </div>
+
+              <button onclick="openArchModal(3)" type="button" data-cursor="DEPLOY" class="magnetic w-full py-3.5 px-6 rounded-full bg-white text-black hover:bg-indigo-400 font-mono font-bold text-xs uppercase tracking-wider justify-center transition-colors">
+                View Architecture →
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 5: CAREER PROGRESSION & CERTIFICATIONS MARQUEE (#FAFAFA)      -->
+  <!-- ===================================================================== -->
+  <section id="career" class="bg-[#FAFAFA] text-[#0A0A0A] py-24 sm:py-32 px-4 sm:px-8 border-b border-neutral-200">
+    <div class="max-w-7xl mx-auto space-y-16">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 scroll-reveal">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-sky-700 font-bold">03 // CAREER TRAJECTORY</span>
+          <h2 class="font-serif font-bold text-4xl sm:text-6xl text-black tracking-tight mt-2">
+            HCLTech Progression
+          </h2>
+        </div>
+        <div class="px-4 py-2 rounded-full bg-black text-white text-xs font-mono">
+          CLIENT: BLUE CROSS &amp; BLUE SHIELD OF RHODE ISLAND (BCBSRI)
+        </div>
+      </div>
+
+      <!-- 3-Stage Progression Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 scroll-reveal">
+        <!-- Stage 1 -->
+        <div class="rounded-3xl border border-neutral-300 bg-white p-7 flex flex-col justify-between space-y-6 hover:border-black transition-colors">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-full bg-neutral-100 text-neutral-700 text-xs font-mono font-bold">SEP 2022 – NOV 2024</span>
+              <span class="font-mono text-xs text-neutral-400">STAGE 01</span>
+            </div>
+            <h3 class="font-serif font-bold text-2xl text-black">Graduate Engineering Trainee</h3>
+            <p class="text-xs font-mono text-sky-700 font-semibold">HCLTech • Chennai, India</p>
+            <p class="text-sm text-neutral-600 leading-relaxed pt-2">
+              Developed modular SQL data transformations, Python full-stack applications, Snowflake schemas, and Power BI analytical views aligned with enterprise engineering standards.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-neutral-200 flex flex-wrap gap-1.5 font-mono text-[11px] text-neutral-700">
+            <span class="px-2.5 py-1 rounded bg-neutral-100">SQL</span>
+            <span class="px-2.5 py-1 rounded bg-neutral-100">Python</span>
+            <span class="px-2.5 py-1 rounded bg-neutral-100">Snowflake</span>
+            <span class="px-2.5 py-1 rounded bg-neutral-100">Power BI</span>
+          </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="rounded-3xl border border-neutral-300 bg-white p-7 flex flex-col justify-between space-y-6 hover:border-black transition-colors">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-mono font-bold">DEC 2024 – DEC 2025</span>
+              <span class="font-mono text-xs text-neutral-400">STAGE 02</span>
+            </div>
+            <h3 class="font-serif font-bold text-2xl text-black">Software Engineer</h3>
+            <p class="text-xs font-mono text-indigo-700 font-semibold">HCLTech (BCBSRI) • Hyderabad, India</p>
+            <p class="text-sm text-neutral-600 leading-relaxed pt-2">
+              Configured Matillion on Azure VMs, executed KeyVault and Snowflake environment migrations, built Azure DevOps release pipelines, and scaled compute to eliminate ETL bottlenecks.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-neutral-200 flex flex-wrap gap-1.5 font-mono text-[11px] text-neutral-700">
+            <span class="px-2.5 py-1 rounded bg-neutral-100">Matillion ETL</span>
+            <span class="px-2.5 py-1 rounded bg-neutral-100">Azure VMs</span>
+            <span class="px-2.5 py-1 rounded bg-neutral-100">KeyVault</span>
+            <span class="px-2.5 py-1 rounded bg-neutral-100">Azure DevOps</span>
+          </div>
+        </div>
+
+        <!-- Stage 3 (Current) -->
+        <div class="rounded-3xl border-2 border-black bg-black text-white p-7 flex flex-col justify-between space-y-6 shadow-2xl">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-full bg-emerald-400 text-black text-xs font-mono font-bold">JAN 2026 – PRESENT</span>
+              <span class="font-mono text-xs text-sky-400">CURRENT</span>
+            </div>
+            <h3 class="font-serif font-bold text-2xl text-white">Senior Software Engineer</h3>
+            <p class="text-xs font-mono text-sky-400 font-semibold">Data, ETL &amp; Cloud DevOps • HCLTech (BCBSRI)</p>
+            <p class="text-sm text-neutral-300 leading-relaxed pt-2">
+              Leading Matillion ETL/DPC &amp; Snowflake engineering, ground-up DPC platform setup, Power BI analytics, multi-stage YAML CI/CD, Azure cloud infrastructure, SonarQube &amp; Legit Security gates, and 500+ job SMTP standardization with 0% error.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-white/15 flex flex-wrap gap-1.5 font-mono text-[11px] text-neutral-200">
+            <span class="px-2.5 py-1 rounded bg-white/10">METL &amp; DPC</span>
+            <span class="px-2.5 py-1 rounded bg-white/10">Azure DevOps</span>
+            <span class="px-2.5 py-1 rounded bg-white/10">SonarQube</span>
+            <span class="px-2.5 py-1 rounded bg-white/10">Legit Security</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Education & Infinite Certifications Ticker -->
+      <div class="space-y-6 pt-4 scroll-reveal">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-6 rounded-3xl bg-white border border-neutral-300">
+          <div>
+            <span class="text-xs font-mono text-neutral-500 uppercase">EDUCATION</span>
+            <h4 class="font-serif font-bold text-xl sm:text-2xl text-black">B.Tech in Electronics &amp; Communication Engineering (ECE)</h4>
+            <p class="text-sm text-neutral-600">Rajiv Gandhi University of Knowledge Technologies (RGUKT), Ongole</p>
+          </div>
+          <span class="px-4 py-1.5 rounded-full bg-neutral-100 text-black font-mono text-xs font-bold self-start sm:self-center">2016 – 2022</span>
+        </div>
+
+        <!-- Certifications Marquee -->
+        <div class="marquee-wrapper overflow-hidden py-3 border-y border-neutral-300">
+          <div class="marquee-track-left flex items-center gap-6">
+            <div class="flex items-center gap-6 shrink-0 font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-black">
+              <span class="px-4 py-2 rounded-full bg-sky-300 text-black">★ Microsoft Certified: Azure Fundamentals</span>
+              <span>•</span>
+              <span class="px-4 py-2 rounded-full bg-cyan-300 text-black">★ Snowflake Technical Assessment Certified</span>
+              <span>•</span>
+              <span class="px-4 py-2 rounded-full bg-emerald-300 text-black">★ Python Full Stack &amp; SQL Certified</span>
+              <span>•</span>
+              <span class="px-4 py-2 rounded-full bg-purple-300 text-black">★ Codevibe Hackathon Builder (Healthcare AI)</span>
+              <span>•</span>
+            </div>
+            <div class="flex items-center gap-6 shrink-0 font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-black" aria-hidden="true">
+              <span class="px-4 py-2 rounded-full bg-sky-300 text-black">★ Microsoft Certified: Azure Fundamentals</span>
+              <span>•</span>
+              <span class="px-4 py-2 rounded-full bg-cyan-300 text-black">★ Snowflake Technical Assessment Certified</span>
+              <span>•</span>
+              <span class="px-4 py-2 rounded-full bg-emerald-300 text-black">★ Python Full Stack &amp; SQL Certified</span>
+              <span>•</span>
+              <span class="px-4 py-2 rounded-full bg-purple-300 text-black">★ Codevibe Hackathon Builder (Healthcare AI)</span>
+              <span>•</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 6: CLASSIC EDITORIAL FOOTER BANNER (#050505)                  -->
+  <!-- ===================================================================== -->
+  <footer id="footer-connect" class="bg-[#050505] text-white pt-20 pb-12 px-4 sm:px-8 overflow-hidden">
+    <div class="max-w-7xl mx-auto space-y-14">
+      <!-- Top Action Bar -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-b border-white/10 pb-12">
+        <div class="space-y-3 max-w-xl">
+          <span class="text-xs font-mono uppercase tracking-widest text-sky-400">04 // INITIATE CONNECTION</span>
+          <h2 class="font-serif font-bold text-3xl sm:text-5xl tracking-tight text-white">
+            Ready to build resilient <span class="italic font-semibold text-sky-300">Data &amp; Cloud</span> platforms?
+          </h2>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="copyEmailAddress()" type="button" data-cursor="COPY" class="magnetic px-6 py-4 rounded-full bg-white text-black hover:bg-sky-400 font-mono font-bold text-xs uppercase tracking-wider transition-colors">
+            Copy Email: naveenguduri7890@gmail.com
+          </button>
+          <a href="https://www.linkedin.com/in/naveen-guduri-663763166" target="_blank" rel="noopener noreferrer" data-cursor="OPEN" class="magnetic px-6 py-4 rounded-full border border-white/25 hover:border-sky-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-colors">
+            LinkedIn Profile ↗
+          </a>
+          <button onclick="openContactModal()" type="button" data-cursor="SEND" class="magnetic px-6 py-4 rounded-full bg-gradient-to-r from-sky-400 to-indigo-400 text-black font-mono font-bold text-xs uppercase tracking-wider shadow-lg shadow-sky-500/25">
+            Quick Inquiry Composer
+          </button>
+        </div>
+      </div>
+
+      <!-- Oversized Classic Serif Kinetic Wordmark Spelling 'NAVEEN' -->
+      <div class="py-4 text-center overflow-hidden" data-cursor="EXPLORE">
+        <div id="kinetic-wordmark" class="font-serif font-bold italic text-[19vw] sm:text-[16vw] lg:text-[13.5rem] leading-[0.88] tracking-tight select-none flex justify-center items-center gap-1 sm:gap-3">
+          <span class="geo-letter text-sky-400">N</span>
+          <span class="geo-letter text-white">A</span>
+          <span class="geo-letter text-indigo-300">V</span>
+          <span class="geo-letter text-emerald-300">E</span>
+          <span class="geo-letter text-amber-200">E</span>
+          <span class="geo-letter text-cyan-300">N</span>
+        </div>
+      </div>
+
+      <!-- Bottom Copyright & Location -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-white/10 text-xs font-mono text-neutral-400">
+        <span>© 2026 NAVEEN GUDURI • DATA, ETL &amp; CLOUD DEVOPS ENGINEER</span>
+        <span>HYDERABAD, TELANGANA, INDIA</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- INTERACTIVE ARCHITECTURE SCHEMATIC MODAL                              -->
+  <!-- ===================================================================== -->
+  <div id="arch-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-2xl rounded-3xl border border-white/15 bg-[#0e0e12] text-white p-6 sm:p-8 shadow-2xl space-y-6">
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <span id="arch-modal-tag" class="text-xs font-mono uppercase tracking-widest text-sky-400">ARCHITECTURE BRIEF</span>
+          <h3 id="arch-modal-title" class="font-serif font-bold text-2xl sm:text-3xl text-white mt-1">Project Title</h3>
+        </div>
+        <button onclick="closeArchModal()" type="button" data-cursor="CLOSE" class="w-10 h-10 rounded-full border border-white/15 hover:bg-white hover:text-black flex items-center justify-center font-mono text-sm transition-colors">
+          ✕
+        </button>
+      </div>
+
+      <div id="arch-modal-flow" class="p-4 rounded-2xl bg-black border border-white/10 space-y-3">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div class="space-y-2.5">
+        <div class="text-xs font-mono uppercase tracking-wider text-neutral-400">ENGINEERING IMPLEMENTATION &amp; OUTCOMES</div>
+        <ul id="arch-modal-bullets" class="space-y-2 text-sm text-neutral-300 list-disc pl-5">
+          <!-- Populated dynamically -->
+        </ul>
+      </div>
+
+      <div id="arch-modal-tags" class="flex flex-wrap gap-2 pt-2 border-t border-white/10">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- INTERACTIVE RECRUITER MESSAGE COMPOSER MODAL                          -->
+  <!-- ===================================================================== -->
+  <div id="contact-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-xl rounded-3xl border border-white/15 bg-[#0e0e12] text-white p-6 sm:p-8 shadow-2xl space-y-5">
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-sky-400">DIRECT DISPATCH</span>
+          <h3 class="font-serif font-bold text-2xl text-white mt-1">Message Naveen Guduri</h3>
+        </div>
+        <button onclick="closeContactModal()" type="button" data-cursor="CLOSE" class="w-10 h-10 rounded-full border border-white/15 hover:bg-white hover:text-black flex items-center justify-center font-mono text-sm transition-colors">
+          ✕
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="modal-sender" class="block text-xs font-mono text-neutral-400 mb-1.5">YOUR NAME / COMPANY</label>
+          <input id="modal-sender" type="text" value="Talent Acquisition" class="w-full px-4 py-3 rounded-xl border border-white/15 bg-black text-sm text-white focus:outline-none focus:border-sky-400" />
+        </div>
+        <div>
+          <label for="modal-role" class="block text-xs font-mono text-neutral-400 mb-1.5">ROLE TRACK</label>
+          <select id="modal-role" class="w-full px-4 py-3 rounded-xl border border-white/15 bg-black text-sm text-white focus:outline-none focus:border-sky-400">
+            <option value="Hybrid Data & Cloud DevOps Engineer">Hybrid Data &amp; Cloud DevOps</option>
+            <option value="Senior Data & ETL Engineer (Matillion / Snowflake)">Senior Data &amp; ETL Engineer</option>
+            <option value="Cloud DevOps Engineer (Azure / CI-CD)">Cloud DevOps Engineer</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="modal-message" class="block text-xs font-mono text-neutral-400 mb-1.5">MESSAGE</label>
+        <textarea id="modal-message" rows="4" class="w-full px-4 py-3 rounded-xl border border-white/15 bg-black text-sm text-white focus:outline-none focus:border-sky-400">Hi Naveen, we reviewed your portfolio highlighting Matillion ETL/DPC, Snowflake, SQL, Power BI, Azure DevOps, cloud automation, and CI/CD governance. Let's schedule a conversation.</textarea>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <button onclick="copyModalDraft()" type="button" data-cursor="COPY" class="px-5 py-3 rounded-full border border-white/20 hover:border-sky-400 text-xs font-mono font-bold uppercase tracking-wider text-white transition-colors">
+          Copy Draft
+        </button>
+        <a id="modal-mailto" href="mailto:naveenguduri7890@gmail.com" data-cursor="SEND" class="px-6 py-3 rounded-full bg-gradient-to-r from-sky-400 to-indigo-400 text-black text-xs font-mono font-bold uppercase tracking-wider">
+          Open in Email Client →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. SPRING-PHYSICS CUSTOM MOTION CURSOR & MAGNETIC CONTROLS
+    // =========================================================================
+    const cursorDot = document.getElementById('cursor-dot');
+    const cursorRing = document.getElementById('cursor-ring');
+    const cursorPillText = document.getElementById('cursor-pill-text');
+    const motionToggleBtn = document.getElementById('motion-toggle');
+    const motionLed = document.getElementById('motion-led');
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+    let motionCursorActive = isFinePointer && !prefersReducedMotion;
+
+    let pointerX = -100;
+    let pointerY = -100;
+    let ringX = -100;
+    let ringY = -100;
+
+    function updateCursorStateUI() {
+      if (motionCursorActive) {
+        document.body.classList.add('motion-cursor-on');
+        cursorDot.style.display = 'block';
+        cursorRing.style.display = 'flex';
+        motionLed.classList.remove('bg-neutral-500');
+        motionLed.classList.add('bg-emerald-400');
+      } else {
+        document.body.classList.remove('motion-cursor-on');
+        cursorDot.style.display = 'none';
+        cursorRing.style.display = 'none';
+        motionLed.classList.remove('bg-emerald-400');
+        motionLed.classList.add('bg-neutral-500');
+      }
+    }
+    updateCursorStateUI();
+
+    motionToggleBtn.addEventListener('click', () => {
+      motionCursorActive = !motionCursorActive;
+      updateCursorStateUI();
+      triggerToast(motionCursorActive ? 'MOTION CURSOR ENABLED' : 'STANDARD CURSOR RESTORED');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      pointerX = e.clientX;
+      pointerY = e.clientY;
+      if (motionCursorActive) {
+        cursorDot.style.transform = `translate3d(${pointerX - 4}px, ${pointerY - 4}px, 0)`;
+      }
+    }, { passive: true });
+
+    function renderSpringCursor() {
+      if (motionCursorActive) {
+        ringX += (pointerX - ringX) * 0.16;
+        ringY += (pointerY - ringY) * 0.16;
+        const half = cursorRing.offsetWidth / 2;
+        cursorRing.style.transform = `translate3d(${ringX - half}px, ${ringY - half}px, 0)`;
+      }
+      requestAnimationFrame(renderSpringCursor);
+    }
+    requestAnimationFrame(renderSpringCursor);
+
+    // Contextual Pill Labels on Interactive Targets
+    document.querySelectorAll('[data-cursor], a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (!motionCursorActive) return;
+        const tag = el.getAttribute('data-cursor') || 'EXPLORE';
+        cursorPillText.textContent = tag;
+        cursorRing.classList.add('is-active');
+        cursorDot.style.opacity = '0';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursorRing.classList.remove('is-active');
+        cursorDot.style.opacity = '1';
+      });
+    });
+
+    // Magnetic Pull Physics
+    document.querySelectorAll('.magnetic').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        if (!motionCursorActive) return;
+        const rect = el.getBoundingClientRect();
+        const dx = e.clientX - rect.left - rect.width / 2;
+        const dy = e.clientY - rect.top - rect.height / 2;
+        el.style.transform = `translate3d(${dx * 0.24}px, ${dy * 0.24}px, 0)`;
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'translate3d(0, 0, 0)';
+      });
+    });
+
+    // Kinetic Footer Letters Proximity Reaction
+    const geoLetters = document.querySelectorAll('.geo-letter');
+    const wordmark = document.getElementById('kinetic-wordmark');
+    if (wordmark && !prefersReducedMotion) {
+      wordmark.addEventListener('mousemove', (e) => {
+        geoLetters.forEach((letter, idx) => {
+          const rect = letter.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const dist = Math.abs(e.clientX - centerX);
+          const lift = Math.max(0, 1 - dist / 240);
+          const rot = (idx % 2 === 0 ? -1 : 1) * lift * 6;
+          letter.style.transform = `translateY(${(-lift * 22).toFixed(1)}px) rotate(${rot.toFixed(1)}deg) scale(${(1 + lift * 0.07).toFixed(3)})`;
+        });
+      });
+      wordmark.addEventListener('mouseleave', () => {
+        geoLetters.forEach(letter => {
+          letter.style.transform = 'translateY(0) rotate(0deg) scale(1)';
+        });
+      });
+    }
+
+    // =========================================================================
+    // 2. 3D PERSPECTIVE ANIME PORTRAIT TILT & CYAN RIM-GLOW TRACKING
+    // =========================================================================
+    const heroAvatarStage = document.getElementById('hero-avatar-stage');
+    const heroAvatarCard = document.getElementById('hero-avatar-card');
+    const heroAvatarGlare = document.getElementById('hero-avatar-glare');
+
+    function handlePortraitTilt(clientX, clientY) {
+      if (prefersReducedMotion) return;
+      const rect = heroAvatarStage.getBoundingClientRect();
+      const nx = (clientX - rect.left) / rect.width - 0.5;
+      const ny = (clientY - rect.top) / rect.height - 0.5;
+      const rotY = (nx * 22).toFixed(2);
+      const rotX = (-ny * 22).toFixed(2);
+
+      heroAvatarCard.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg) scale(1.025)`;
+      heroAvatarCard.style.boxShadow = `${(-nx * 30).toFixed(0)}px ${(25 - ny * 20).toFixed(0)}px 75px rgba(56, 189, 248, 0.34)`;
+
+      const gx = ((nx + 0.5) * 100).toFixed(1);
+      const gy = ((ny + 0.5) * 100).toFixed(1);
+      heroAvatarGlare.style.opacity = '1';
+      heroAvatarGlare.style.background = `radial-gradient(circle at ${gx}% ${gy}%, rgba(56, 189, 248, 0.34), transparent 64%)`;
+    }
+
+    function resetPortraitTilt() {
+      heroAvatarCard.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+      heroAvatarCard.style.boxShadow = '0 25px 70px rgba(56, 189, 248, 0.22)';
+      heroAvatarGlare.style.opacity = '0';
+    }
+
+    heroAvatarStage.addEventListener('mousemove', (e) => {
+      handlePortraitTilt(e.clientX, e.clientY);
+    }, { passive: true });
+
+    heroAvatarStage.addEventListener('mouseleave', resetPortraitTilt);
+
+    heroAvatarStage.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        handlePortraitTilt(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    heroAvatarStage.addEventListener('touchend', resetPortraitTilt);
+
+    // Graceful Image Fallback & Custom Avatar Uploader
+    function renderFallbackPortrait(imgEl) {
+      imgEl.style.display = 'none';
+      const fallback = document.getElementById('anime-svg-fallback');
+      if (fallback) {
+        fallback.classList.remove('hidden');
+        fallback.classList.add('flex');
+      }
+    }
+
+    const avatarFileInput = document.getElementById('avatar-file-input');
+    avatarFileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target.result;
+        const heroImg = document.getElementById('hero-anime-img');
+        const fallback = document.getElementById('anime-svg-fallback');
+        heroImg.src = dataUrl;
+        heroImg.style.display = 'block';
+        if (fallback) {
+          fallback.classList.add('hidden');
+          fallback.classList.remove('flex');
+        }
+        document.querySelectorAll('.nav-avatar-img, .about-avatar-img').forEach(img => {
+          img.src = dataUrl;
+          img.style.display = 'block';
+          if (img.nextElementSibling) img.nextElementSibling.style.display = 'none';
+        });
+        triggerToast('PORTRAIT UPDATED');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // =========================================================================
+    // 3. SCROLL PROGRESS, REVEAL & STICKY FOLDER DEPTH SCALE
+    // =========================================================================
+    const scrollBar = document.getElementById('scroll-bar');
+    const stackFolders = document.querySelectorAll('.stack-folder');
+
+    window.addEventListener('scroll', () => {
+      const top = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      scrollBar.style.width = `${height > 0 ? (top / height) * 100 : 0}%`;
+
+      stackFolders.forEach((folder, idx) => {
+        const nextFolder = stackFolders[idx + 1];
+        if (!nextFolder) return;
+        const rect = folder.getBoundingClientRect();
+        const nextRect = nextFolder.getBoundingClientRect();
+        const overlap = Math.max(0, Math.min(1, (rect.bottom - nextRect.top) / rect.height));
+        const scale = 1 - overlap * 0.04;
+        folder.style.transform = `scale(${scale.toFixed(4)})`;
+      });
+    }, { passive: true });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
+
+    // =========================================================================
+    // 4. INTERACTIVE 01–05 CAPABILITIES ACCORDION
+    // =========================================================================
+    function toggleCapability(index) {
+      const rows = document.querySelectorAll('.cap-row');
+      rows.forEach((row, idx) => {
+        const body = row.querySelector('.cap-body');
+        const icon = row.querySelector('.cap-icon');
+        if (idx === index) {
+          const isHidden = body.classList.contains('hidden');
+          body.classList.toggle('hidden', !isHidden);
+          icon.textContent = isHidden ? '−' : '+';
+        } else {
+          body.classList.add('hidden');
+          icon.textContent = '+';
+        }
+      });
+    }
+
+    // =========================================================================
+    // 5. ARCHITECTURE SCHEMATIC MODAL DATA & HANDLERS
+    // =========================================================================
+    const architectures = [
+      {
+        tag: '01 / HEALTHCARE CLAIMS AI ANALYTICS',
+        title: 'Healthcare Claims Analytical & Forecasting Dashboard',
+        flow: ['Healthcare Claims SQL', 'Python Forecasting Engine', 'Cursor AI / Copilot', 'Power BI Dashboard'],
+        bullets: [
+          'Built during the Codevibe Hackathon using Python, Cursor AI, and GitHub Copilot to analyze healthcare payer claims performance.',
+          'Surfaced root-cause claim denial patterns and forecasted claim volume trends and financial exposure across key service lines.',
+          'Delivered interactive Power BI executive views backed by optimized SQL analytical queries.'
+        ],
+        tags: ['Python', 'Cursor AI', 'GitHub Copilot', 'SQL', 'Power BI']
+      },
+      {
+        tag: '02 / MATILLION ETL ADMIN ACHIEVEMENT',
+        title: 'Enterprise SMTP & Modern Authentication Standardization (0% Error)',
+        flow: ['500+ Production Jobs', 'Azure KeyVault OAuth', 'Matillion ETL / DPC Admin', 'Standardized Modern SMTP'],
+        bullets: [
+          'Executed as a milestone Matillion ETL Administrator initiative across 500+ production jobs with 0% error and zero schedule disruption.',
+          'Replaced legacy basic-auth email configurations with centralized OAuth Modern Authentication integrated with Azure KeyVault.',
+          'Verified end-to-end alert delivery and governance across both Matillion ETL (METL) and Matillion Data Productivity Cloud (DPC).'
+        ],
+        tags: ['Matillion ETL Admin', 'Matillion DPC', 'OAuth Modern Auth', 'Azure KeyVault', '0% Error']
+      },
+      {
+        tag: '03 / AUTOMATED DEVOPS & RELEASE ENGINEERING',
+        title: 'Multi-Stage YAML Pipelines, Quality Gates & Cloud Automation',
+        flow: ['Azure Repos (Git)', 'SonarQube SAST', 'Legit Security', 'YAML CI/CD', 'Azure Cloud / VMSS'],
+        bullets: [
+          'Architected multi-stage YAML and Classic pipelines in Azure DevOps with branch policies, approval gates, and artifact caching.',
+          'Enforced SonarQube Quality Gates and Legit Security secret/supply-chain scanning across production branches while remediating critical vulnerabilities (VITs).',
+          'Validated passwordless Workload Identity Federation (WIF), provisioned elastic Azure VMSS agent pools, and deployed containerized Docker workloads across Azure.'
+        ],
+        tags: ['Azure DevOps', 'SonarQube', 'Legit Security', 'Docker', 'Azure VMSS', 'WIF']
+      },
+      {
+        tag: '04 / MATILLION DPC GROUND-UP PLATFORM SETUP',
+        title: 'Matillion DPC Ground-Up Platform Setup & Environment Provisioning',
+        flow: ['Azure VNet & Firewall', 'DPC Execution Agents', 'Azure KeyVault Secrets', 'Snowflake Connectivity'],
+        bullets: [
+          'Set up Matillion Data Productivity Cloud (DPC) completely from scratch—configuring cloud environments, execution agents, and secure networking.',
+          'Established Snowflake warehouse connections, Azure KeyVault secret integrations, and role-based access governance across dev, UAT, and production.',
+          'Completed METL VM upgrades and structured environment readiness for seamless workload onboarding.'
+        ],
+        tags: ['Matillion DPC', 'Ground-Up Setup', 'Snowflake', 'Azure KeyVault', 'Microsoft Azure']
+      }
+    ];
+
+    const archModal = document.getElementById('arch-modal');
+    function openArchModal(idx) {
+      const item = architectures[idx];
+      document.getElementById('arch-modal-tag').textContent = item.tag;
+      document.getElementById('arch-modal-title').textContent = item.title;
+
+      const flowHtml = `
+        <div class="text-[11px] font-mono text-neutral-400">ARCHITECTURE PIPELINE SCHEMATIC</div>
+        <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+          ${item.flow.map((step, i) => `
+            <span class="px-3 py-1.5 rounded-lg bg-neutral-900 border border-sky-400/40 text-sky-300">${step}</span>
+            ${i < item.flow.length - 1 ? '<span class="text-sky-400 font-bold">→</span>' : ''}
+          `).join('')}
+        </div>
+        <div class="h-1.5 w-full rounded-full flow-beam"></div>
+      `;
+      document.getElementById('arch-modal-flow').innerHTML = flowHtml;
+
+      document.getElementById('arch-modal-bullets').innerHTML = item.bullets
+        .map(b => `<li>${b}</li>`)
+        .join('');
+
+      document.getElementById('arch-modal-tags').innerHTML = item.tags
+        .map(t => `<span class="px-3 py-1 rounded-full bg-white/10 text-xs font-mono text-neutral-200">${t}</span>`)
+        .join('');
+
+      archModal.classList.remove('hidden');
+      archModal.classList.add('flex');
+    }
+
+    function closeArchModal() {
+      archModal.classList.add('hidden');
+      archModal.classList.remove('flex');
+    }
+
+    archModal.addEventListener('click', (e) => {
+      if (e.target === archModal) closeArchModal();
+    });
+
+    // =========================================================================
+    // 6. CLIPBOARD & CONTACT COMPOSER MODAL
+    // =========================================================================
+    let toastTimer;
+    function triggerToast(msg) {
+      const banner = document.getElementById('toast-banner');
+      document.getElementById('toast-text').textContent = msg;
+      banner.classList.remove('translate-y-24', 'opacity-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        banner.classList.add('translate-y-24', 'opacity-0');
+      }, 2600);
+    }
+
+    function copyViaExecCommand(text, label) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        triggerToast(label);
+      } catch (err) {
+        triggerToast('COPY FAILED');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function copyEmailAddress() {
+      copyViaExecCommand('naveenguduri7890@gmail.com', 'COPIED: naveenguduri7890@gmail.com');
+    }
+
+    const contactModal = document.getElementById('contact-modal');
+    const modalSender = document.getElementById('modal-sender');
+    const modalRole = document.getElementById('modal-role');
+    const modalMessage = document.getElementById('modal-message');
+    const modalMailto = document.getElementById('modal-mailto');
+
+    function syncModalMailto() {
+      const sender = modalSender.value.trim() || 'Recruiter';
+      const role = modalRole.value;
+      const body = modalMessage.value.trim();
+      const subj = encodeURIComponent(`${role} — Inquiry from ${sender}`);
+      const mailBody = encodeURIComponent(`${body}\n\nBest regards,\n${sender}`);
+      modalMailto.href = `mailto:naveenguduri7890@gmail.com?subject=${subj}&body=${mailBody}`;
+    }
+
+    modalSender.addEventListener('input', syncModalMailto);
+    modalRole.addEventListener('change', syncModalMailto);
+    modalMessage.addEventListener('input', syncModalMailto);
+    syncModalMailto();
+
+    function openContactModal() {
+      contactModal.classList.remove('hidden');
+      contactModal.classList.add('flex');
+    }
+
+    function closeContactModal() {
+      contactModal.classList.add('hidden');
+      contactModal.classList.remove('flex');
+    }
+
+    contactModal.addEventListener('click', (e) => {
+      if (e.target === contactModal) closeContactModal();
+    });
+
+    function copyModalDraft() {
+      const sender = modalSender.value.trim() || 'Recruiter';
+      const role = modalRole.value;
+      const body = modalMessage.value.trim();
+      copyViaExecCommand(`Subject: ${role}\n\n${body}\n\nBest regards,\n${sender}`, 'INQUIRY DRAFT COPIED');
+    }
+  </script>
+</body>
+</html>
